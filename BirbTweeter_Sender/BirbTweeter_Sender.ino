@@ -91,6 +91,10 @@ void loop() {
           if (currentLine.startsWith("tosend=")) {
             String tosend = currentLine.substring(sizeof("tosend=")-1);
             Serial.println(String("\ntosend: ") + tosend);
+
+            Heltec.LoRa.beginPacket();
+            Heltec.LoRa.print(tosend);
+            Heltec.LoRa.endPacket();
           }
           // if the current line is blank, you got two newline characters in a row.
           // that's the end of the client HTTP request, so send a response:
