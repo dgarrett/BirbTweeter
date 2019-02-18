@@ -14,8 +14,10 @@ void HeltecLoRaData(){
   Heltec.display->setFont(ArialMT_Plain_10);
   Heltec.display->drawString(0 , 15 , "Received "+ packSize + " bytes");
   Heltec.display->drawStringMaxWidth(0 , 26 , 128, packet);
-  Heltec.display->drawString(0, 0, rssi);  
+  Heltec.display->drawString(0, 0, rssi);
   Heltec.display->display();
+  printer.println(packet);
+  printer.feed(1);
 }
 
 void cbk(int packetSize) {
@@ -41,18 +43,10 @@ void setup() {
   Serial2.begin(9600); // Printer
   printer.begin();
 
-  printer.justify('L');
-  printer.println(F("This"));
-  printer.justify('C');
-  printer.println(F("is a"));
-  printer.justify('R');
-  printer.setSize('L');
-  printer.println(F("test"));
+  printer.println(F("Printer init success"));
   printer.feed(2);
 
   printer.setDefault();
-  printer.printBarcode("TESTING", CODE39);
-  printer.feed(2);
   
   delay(1000);
   //Heltec.LoRa.onReceive(cbk);
