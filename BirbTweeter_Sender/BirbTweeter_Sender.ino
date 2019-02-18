@@ -74,16 +74,23 @@ void loop() {
       if (client.available()) {             // if there's bytes to read from the client,
         char c = client.read();             // read a byte, then
         Serial.write(c);                    // print it out the serial monitor
+        if (c != '\r' && c != '\n') {  // if you got anything else but a carriage return character,
+          currentLine += c;      // add it to the end of the currentLine
+        }
         if (headersDone) {
           contentlen--;
-          Serial.println(String("\n>>>contentlen: ") + contentlen);
+          //Serial.println(String("\n>>>contentlen: ") + contentlen);
         }
         if (c == '\n' || (headersDone && contentlen <= 0)) {                    // if the byte is a newline character
 
           if (currentLine.startsWith("Content-Length: ")) {
-            String len = currentLine.substring(sizeof("Content-Length:"));
+            String len = currentLine.substring(sizeof("Content-Length: ")-1);
             //Serial.println(String("mylen: ") + len);
             contentlen = atoi(len.c_str());
+          }
+          if (currentLine.startsWith("tosend=")) {
+            String tosend = currentLine.substring(sizeof("tosend=")-1);
+            Serial.println(String("\ntosend: ") + tosend);
           }
           // if the current line is blank, you got two newline characters in a row.
           // that's the end of the client HTTP request, so send a response:
@@ -114,8 +121,6 @@ void loop() {
             currentLine = "";
           }
           
-        } else if (c != '\r') {  // if you got anything else but a carriage return character,
-          currentLine += c;      // add it to the end of the currentLine
         }
 
         
