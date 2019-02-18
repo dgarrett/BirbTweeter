@@ -60,21 +60,38 @@ void oldloop()
   delay(1000);                       // wait for a second
 }
 
+int contentlen = 0;
+
 void loop() {
   WiFiClient client = server.available();   // listen for incoming clients
 
   if (client) {                             // if you get a client,
     Serial.println("New Client.");           // print a message out the serial port
     String currentLine = "";                // make a String to hold incoming data from the client
+
+    bool headersDone = false;
     while (client.connected()) {            // loop while the client's connected
       if (client.available()) {             // if there's bytes to read from the client,
         char c = client.read();             // read a byte, then
         Serial.write(c);                    // print it out the serial monitor
-        if (c == '\n') {                    // if the byte is a newline character
+        if (headersDone) {
+          contentlen--;
+          Serial.println(String("\n>>>contentlen: ") + contentlen);
+        }
+        if (c == '\n' || (headersDone && contentlen <= 0)) {                    // if the byte is a newline character
 
+          if (currentLine.startsWith("Content-Length: ")) {
+            String len = currentLine.substring(sizeof("Content-Length:"));
+            //Serial.println(String("mylen: ") + len);
+            contentlen = atoi(len.c_str());
+          }
           // if the current line is blank, you got two newline characters in a row.
           // that's the end of the client HTTP request, so send a response:
           if (currentLine.length() == 0) {
+            headersDone = true;
+          }
+          
+          if (headersDone && contentlen <= 0) {
             // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
             // and a content-type so the client knows what's coming, then a blank line:
             client.println("HTTP/1.1 200 OK");
@@ -96,9 +113,12 @@ void loop() {
           } else {    // if you got a newline, then clear currentLine:
             currentLine = "";
           }
+          
         } else if (c != '\r') {  // if you got anything else but a carriage return character,
           currentLine += c;      // add it to the end of the currentLine
         }
+
+        
 
         // Check to see if the client request was "GET /H" or "GET /L":
         if (currentLine.endsWith("GET /H")) {
