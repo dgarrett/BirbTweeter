@@ -1,35 +1,12 @@
-/*
-  This is a simple example show the Heltec.LoRa recived data in OLED.
-
-  The onboard OLED display is SSD1306 driver and I2C interface. In order to make the
-  OLED correctly operation, you should output a high-low-high(1-0-1) signal by soft-
-  ware to OLED's reset pin, the low-level signal at least 5ms.
-
-  OLED pins to ESP32 GPIOs via this connecthin:
-  OLED_SDA -- GPIO4
-  OLED_SCL -- GPIO15
-  OLED_RST -- GPIO16
-  
-  by Aaron.Lee from HelTec AutoMation, ChengDu, China
-  成都惠利特自动化科技有限公司
-  www.heltec.cn
-  
-  this project also realess in GitHub:
-  https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series
-*/
 #include "heltec.h" 
-#include "images.h"
+#include "Adafruit_Thermal.h"
 
 #define BAND    433E6  //you can set band here directly,e.g. 868E6,915E6
 String rssi = "RSSI --";
 String packSize = "--";
 String packet ;
 
-void logo(){
-  Heltec.display->clear();
-  Heltec.display->drawXbm(0,5,logo_width,logo_height,logo_bits);
-  Heltec.display->display();
-}
+Adafruit_Thermal printer(&Serial2, 13);
 
 void HeltecLoRaData(){
   Heltec.display->clear();
@@ -56,13 +33,27 @@ void setup() {
   Heltec.display->init();
   Heltec.display->flipScreenVertically();  
   Heltec.display->setFont(ArialMT_Plain_10);
-  logo();
-  delay(1500);
-  Heltec.display->clear();
   
   Heltec.display->drawString(0, 0, "Heltec.LoRa Initial success!");
   Heltec.display->drawString(0, 10, "Wait for incoming data...");
   Heltec.display->display();
+
+  Serial2.begin(9600); // Printer
+  printer.begin();
+
+  printer.justify('L');
+  printer.println(F("This"));
+  printer.justify('C');
+  printer.println(F("is a"));
+  printer.justify('R');
+  printer.setSize('L');
+  printer.println(F("test"));
+  printer.feed(2);
+
+  printer.setDefault();
+  printer.printBarcode("TESTING", CODE39);
+  printer.feed(2);
+  
   delay(1000);
   //Heltec.LoRa.onReceive(cbk);
   Heltec.LoRa.receive();
