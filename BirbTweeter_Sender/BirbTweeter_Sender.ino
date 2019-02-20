@@ -13,6 +13,10 @@ String packet ;
 const char *ssid = "BirbTweeterSender";
 //const char *password = "yourPassword";
 
+const char *html_index = R"(
+#include "data/index.html"
+)";
+
 WiFiServer server(80);
 
 void setup()
@@ -110,12 +114,13 @@ void loop() {
             client.println();
 
             // the content of the HTTP response follows the header:
-            client.print("Click <a href=\"/H\">here</a> to turn ON the LED.<br>");
+            /*client.print("Click <a href=\"/H\">here</a> to turn ON the LED.<br>");
             client.print("Click <a href=\"/L\">here</a> to turn OFF the LED.<br>");
             client.print("<form action=\"/send\" method=\"post\">");
             client.print("To Send: <input type=\"text\" name=\"tosend\"><br>");
             client.print("<input type=\"submit\" value=\"Submit\">");
-            client.print("</form>");
+            client.print("</form>");*/
+            client.print(html_index);
 
             // The HTTP response ends with another blank line:
             client.println();
