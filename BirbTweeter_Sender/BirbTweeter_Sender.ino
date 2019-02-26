@@ -45,13 +45,15 @@ void setup()
     Serial.println("Args: ");
     Serial.println(server.args());
     Serial.println(server.arg("tosend"));
+    Serial.println(server.arg("currenttime"));
     server.send(200, "text/html", html_root);
-    /*String tosend = currentLine.substring(sizeof("tosend=")-1);
-    Serial.println(String("\ntosend: ") + tosend);
+    Heltec.display->drawString(0, 10, String(server.arg("tosend")));
+    Heltec.display->display();
 
     Heltec.LoRa.beginPacket();
-    Heltec.LoRa.print(tosend);
-    Heltec.LoRa.endPacket();*/
+    Heltec.LoRa.print(server.arg("currenttime") + "\n");
+    Heltec.LoRa.print(server.arg("tosend"));
+    Heltec.LoRa.endPacket();
   });
   server.begin();
 }
