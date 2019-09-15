@@ -11,6 +11,8 @@ String rssi = "RSSI --";
 String packSize = "--";
 String packet ;
 
+char seq = 0;
+
 const char *ssid = "BirbTweeterSender";
 //const char *password = "yourPassword";
 
@@ -42,6 +44,7 @@ void setup()
     server.send(200, "text/html", html_root);
   });
   server.on("/send", HTTP_POST, []() {
+    Heltec.display->clear();
     Serial.println("Args: ");
     Serial.println(server.args());
     Serial.println(server.arg("tosend"));
@@ -51,9 +54,22 @@ void setup()
     Heltec.display->display();
 
     Heltec.LoRa.beginPacket();
+    Heltec.LoRa.print(seq);
     Heltec.LoRa.print(server.arg("currenttime") + "\n");
-    Heltec.LoRa.print(server.arg("tosend"));
+    Heltec.LoRa.print(server.arg("tosend") + "\n");
     Heltec.LoRa.endPacket();
+
+    int recv = 0;
+    int i = 0;
+    while (!(recv = Heltec.LoRa.parsePacket()) && i++ < 1000) {
+      delay(10);
+    }
+    if (recv && (char)Heltec.LoRa.read() == seq) {
+      Heltec.display->drawString(0, 20, "Send success");
+    } else {
+      Heltec.display->drawString(0, 20, "Send failure");
+    }
+    Heltec.display->display();
   });
   server.begin();
 }

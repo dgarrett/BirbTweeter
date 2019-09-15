@@ -21,10 +21,15 @@ void HeltecLoRaData(){
 }
 
 void cbk(int packetSize) {
+  packetSize--;
   packet ="";
   packSize = String(packetSize,DEC);
+  char seq = Heltec.LoRa.read();
   for (int i = 0; i < packetSize; i++) { packet += (char) Heltec.LoRa.read(); }
   rssi = "RSSI " + String(Heltec.LoRa.packetRssi(), DEC) ;
+  Heltec.LoRa.beginPacket();
+  Heltec.LoRa.print(seq);
+  Heltec.LoRa.endPacket();
   HeltecLoRaData();
 }
 
