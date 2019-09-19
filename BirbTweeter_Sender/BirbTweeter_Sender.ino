@@ -35,7 +35,7 @@ void setup()
   WiFi.softAP(ssid);
   IPAddress myIP = WiFi.softAPIP();
   Heltec.display->clear();
-  Heltec.display->drawString(0, 0, String("AP IP address: ") + String(myIP));
+  Heltec.display->drawString(0, 0, String("AP IP address: ") + myIP.toString());
   Heltec.display->display();
 
   server.on("/", []() {
