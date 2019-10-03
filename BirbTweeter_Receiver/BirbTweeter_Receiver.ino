@@ -6,18 +6,22 @@ String rssi = "RSSI --";
 String packSize = "--";
 String packet ;
 
+// Set to 0 if you aren't connecting a printer
+#define PRINTER 1
+
 Adafruit_Thermal printer(&Serial2, 13);
 
 void HeltecLoRaData(){
   Heltec.display->clear();
   Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
   Heltec.display->setFont(ArialMT_Plain_10);
-  Heltec.display->drawString(0 , 15 , "Received "+ packSize + " bytes");
-  Heltec.display->drawStringMaxWidth(0 , 26 , 128, packet);
-  Heltec.display->drawString(0, 0, rssi);
+  Heltec.display->drawString(0 , 0 , "Got "+ packSize + " B, " + rssi);
+  Heltec.display->drawStringMaxWidth(0 , 11 , 130, packet);
   Heltec.display->display();
+#if PRINTER
   printer.println(packet);
   printer.feed(1);
+#endif
 }
 
 void cbk(int packetSize) {
@@ -40,6 +44,7 @@ void setup() {
   Heltec.display->drawString(0, 10, "Wait for incoming data...");
   Heltec.display->display();
 
+#if PRINTER
   Serial2.begin(9600); // Printer
   printer.begin();
 
@@ -47,6 +52,7 @@ void setup() {
   printer.feed(2);
 
   printer.setDefault();
+#endif
   
   delay(1000);
   //Heltec.LoRa.onReceive(cbk);
