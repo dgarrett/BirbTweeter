@@ -1,0 +1,6 @@
+{
+    "board": "Heltec-esp32:esp32:wifi_lora_32_V2",
+    "configuration": "FlashFreq=80,UploadSpeed=921600",
+    "sketch": "BirbTweeter_Wifi.ino",
+    "port": "/dev/tty.usbserial-0001"
+}
