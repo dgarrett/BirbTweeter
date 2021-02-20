@@ -16,7 +16,7 @@ const char *html_root =
 WebServer server(80);
 
 // Set to 0 if you aren't connecting a printer
-#define PRINTER 0
+#define PRINTER 1
 
 // Use thermal printer on Serial port 2 with DTR pin 13
 // DTR is used for the printer to tell us when it's ready
@@ -29,7 +29,7 @@ void setup()
   Heltec.begin(true /*DisplayEnable Enable*/, true /*Heltec.Heltec.Heltec.LoRa Disable*/, true /*Serial Enable*/, true /*PABOOST Enable*/, BAND /*long BAND*/);
 
   Heltec.display->init();
-  Heltec.display->flipScreenVertically();  
+  //Heltec.display->flipScreenVertically();  
   Heltec.display->setFont(ArialMT_Plain_10);
   
   Heltec.display->drawString(0, 0, "Heltec.LoRa Initial success!");
@@ -51,7 +51,7 @@ void setup()
   Serial.println(WiFi.localIP());
 
   Heltec.display->clear();
-  Heltec.display->drawString(0, 0, String("IP address: ") + WiFi.localIP());
+  Heltec.display->drawString(0, 0, String("IP address: ") + WiFi.localIP().toString());
   Heltec.display->display();
 
   // Setup thermal printer to print using Serial port 2
